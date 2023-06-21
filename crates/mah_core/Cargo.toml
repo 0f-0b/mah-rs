@@ -1,0 +1,25 @@
+[package]
+name = "mah_core"
+version = "0.1.0"
+edition.workspace = true
+description.workspace = true
+repository.workspace = true
+license.workspace = true
+keywords.workspace = true
+categories.workspace = true
+
+[dependencies]
+async-trait.workspace = true
+bytes.workspace = true
+derive-into-owned.workspace = true
+enum_dispatch.workspace = true
+serde.workspace = true
+strum_macros.workspace = true
+thiserror.workspace = true
+
+[dev-dependencies]
+anyhow.workspace = true
+tokio = { workspace = true, features = ["macros", "rt-multi-thread", "signal"] }
+mah_http_adapter.workspace = true
+mah_webhook_adapter.workspace = true
+trim-in-place.workspace = true
