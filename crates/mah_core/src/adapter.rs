@@ -9,7 +9,7 @@ use thiserror::Error;
 use crate::message::{FriendMessage, Message};
 use crate::{
     types, AnnouncementDetails, Command, FileDetails, FileUpload, FriendDetails, GroupConfig,
-    GroupDetails, ImageInfo, MemberDetails, Profile, VoiceInfo,
+    GroupDetails, ImageInfo, MemberDetails, MemberInfo, Profile, VoiceInfo,
 };
 
 #[async_trait]
@@ -108,8 +108,7 @@ pub trait MahSession: Sync {
         &self,
         args: &types::UpdateGroupConfigArgs,
     ) -> Result<(), Self::Error>;
-    async fn get_member_info(&self, args: &types::MemberArgs)
-        -> Result<MemberDetails, Self::Error>;
+    async fn get_member_info(&self, args: &types::MemberArgs) -> Result<MemberInfo, Self::Error>;
     async fn update_member_info(
         &self,
         args: &types::UpdateMemberInfoArgs,

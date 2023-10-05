@@ -12,7 +12,7 @@ use mah_core::event::MessageOrEvent;
 use mah_core::message::{FriendMessage, Message};
 use mah_core::{
     types, AnnouncementDetails, Command, FileDetails, FileUpload, FriendDetails, GroupConfig,
-    GroupDetails, ImageInfo, MemberDetails, Profile, VoiceInfo,
+    GroupDetails, ImageInfo, MemberDetails, MemberInfo, Profile, VoiceInfo,
 };
 use once_cell::sync::Lazy;
 use reqwest::header::HeaderValue;
@@ -422,10 +422,7 @@ impl<F: Fetch> MahSession for HttpAdapterSession<F> {
             .await
     }
 
-    async fn get_member_info(
-        &self,
-        args: &types::MemberArgs,
-    ) -> Result<MemberDetails, Self::Error> {
+    async fn get_member_info(&self, args: &types::MemberArgs) -> Result<MemberInfo, Self::Error> {
         self.validate(self.get("memberInfo").query(args).build()?)
             .await
     }

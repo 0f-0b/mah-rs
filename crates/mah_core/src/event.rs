@@ -10,7 +10,7 @@ use crate::message::{
     TempMessage, TempSyncMessage,
 };
 use crate::{
-    types, Bot, FriendDetails, FriendHandle, GroupDetails, GroupHandle, MemberDetails,
+    types, Bot, FriendDetails, FriendHandle, GroupDetails, GroupHandle, GroupHonor, MemberDetails,
     MemberHandle, MemberPermission, MessageHandle, OtherClientDetails, StrangerDetails,
     StrangerHandle, UserHandle,
 };
@@ -400,32 +400,6 @@ pub struct MemberHonorChangeEvent {
 pub enum MemberHonorChangeAction {
     Achieve,
     Lose,
-}
-
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, Deserialize)]
-pub enum GroupHonor {
-    #[serde(rename = "龙王")]
-    Talkative,
-    #[serde(rename = "群聊之火")]
-    Performer,
-    #[serde(rename = "群聊炽焰")]
-    Legend,
-    #[serde(rename = "冒尖小春笋")]
-    Emotion,
-    #[serde(rename = "快乐源泉")]
-    Bronze,
-    #[serde(rename = "学术新星")]
-    Silver,
-    #[serde(rename = "至尊学神")]
-    Golden,
-    #[serde(rename = "一笔当先")]
-    Whirlwind,
-    #[serde(rename = "壕礼皇冠")]
-    Richer,
-    #[serde(rename = "善财福禄寿")]
-    RedPacket,
-    #[serde(rename = "未知群荣誉")]
-    Unknown,
 }
 
 #[derive(Clone, Debug, Deserialize)]

@@ -33,6 +33,32 @@ pub enum Sex {
     Unknown,
 }
 
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, Deserialize)]
+pub enum GroupHonor {
+    #[serde(rename = "龙王")]
+    Talkative,
+    #[serde(rename = "群聊之火")]
+    Performer,
+    #[serde(rename = "群聊炽焰")]
+    Legend,
+    #[serde(rename = "冒尖小春笋")]
+    Emotion,
+    #[serde(rename = "快乐源泉")]
+    Bronze,
+    #[serde(rename = "学术新星")]
+    Silver,
+    #[serde(rename = "至尊学神")]
+    Golden,
+    #[serde(rename = "一笔当先")]
+    Whirlwind,
+    #[serde(rename = "壕礼皇冠")]
+    Richer,
+    #[serde(rename = "善财福禄寿")]
+    RedPacket,
+    #[serde(rename = "未知群荣誉")]
+    Unknown,
+}
+
 #[derive(Clone, Debug, Deserialize)]
 pub struct Profile {
     pub nickname: String,
@@ -101,6 +127,15 @@ pub struct GroupConfig {
     pub auto_approve: bool,
     pub anonymous_chat: bool,
     pub mute_all: bool,
+}
+
+#[derive(Clone, Debug, Deserialize)]
+pub struct MemberActivity {
+    pub rank: i32,
+    #[serde(rename = "point")]
+    pub points: i32,
+    pub honors: Vec<GroupHonor>,
+    pub temperature: i32,
 }
 
 #[derive(Clone, Debug, IntoOwned, Serialize)]
@@ -1051,7 +1086,7 @@ impl MemberHandle {
     pub async fn resolve<S: MahSession + ?Sized>(
         &self,
         session: &S,
-    ) -> Result<MemberDetails, S::Error> {
+    ) -> Result<MemberInfo, S::Error> {
         session
             .get_member_info(&types::MemberArgs {
                 target: self.group.id,
@@ -1240,6 +1275,14 @@ impl MemberDetails {
     pub fn mute_time_remaining(&self) -> Duration {
         Duration::from_secs(self.mute_time_remaining_secs as u64)
     }
+}
+
+#[derive(Clone, Debug, Deserialize)]
+pub struct MemberInfo {
+    #[serde(flatten)]
+    pub details: MemberDetails,
+    #[serde(rename = "active")]
+    pub activity: MemberActivity,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
