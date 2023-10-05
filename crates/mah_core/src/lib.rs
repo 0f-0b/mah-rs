@@ -43,6 +43,12 @@ pub struct Profile {
     pub sex: Sex,
 }
 
+#[derive(Clone, Debug)]
+pub enum FileUpload {
+    Url(Cow<'static, str>),
+    Bytes(Bytes),
+}
+
 #[derive(Clone, Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct ImageInfo {
@@ -315,12 +321,12 @@ pub trait SendMessage {
     async fn upload_image<S: MahSession + ?Sized>(
         &self,
         session: &S,
-        image: Bytes,
+        image: FileUpload,
     ) -> Result<ImageInfo, S::Error>;
     async fn upload_voice<S: MahSession + ?Sized>(
         &self,
         session: &S,
-        voice: Bytes,
+        voice: FileUpload,
     ) -> Result<VoiceInfo, S::Error>;
 }
 
@@ -537,7 +543,7 @@ impl FriendHandle {
     pub async fn upload_image<S: MahSession + ?Sized>(
         &self,
         session: &S,
-        image: Bytes,
+        image: FileUpload,
     ) -> Result<ImageInfo, S::Error> {
         session.upload_image(types::MediaType::Friend, image).await
     }
@@ -545,7 +551,7 @@ impl FriendHandle {
     pub async fn upload_voice<S: MahSession + ?Sized>(
         &self,
         session: &S,
-        voice: Bytes,
+        voice: FileUpload,
     ) -> Result<VoiceInfo, S::Error> {
         session.upload_voice(types::MediaType::Friend, voice).await
     }
@@ -599,7 +605,7 @@ impl SendMessage for FriendHandle {
     async fn upload_image<S: MahSession + ?Sized>(
         &self,
         session: &S,
-        image: Bytes,
+        image: FileUpload,
     ) -> Result<ImageInfo, S::Error> {
         self.upload_image(session, image).await
     }
@@ -607,7 +613,7 @@ impl SendMessage for FriendHandle {
     async fn upload_voice<S: MahSession + ?Sized>(
         &self,
         session: &S,
-        voice: Bytes,
+        voice: FileUpload,
     ) -> Result<VoiceInfo, S::Error> {
         self.upload_voice(session, voice).await
     }
@@ -769,7 +775,7 @@ impl GroupHandle {
     pub async fn upload_image<S: MahSession + ?Sized>(
         &self,
         session: &S,
-        image: Bytes,
+        image: FileUpload,
     ) -> Result<ImageInfo, S::Error> {
         session.upload_image(types::MediaType::Group, image).await
     }
@@ -777,7 +783,7 @@ impl GroupHandle {
     pub async fn upload_voice<S: MahSession + ?Sized>(
         &self,
         session: &S,
-        voice: Bytes,
+        voice: FileUpload,
     ) -> Result<VoiceInfo, S::Error> {
         session.upload_voice(types::MediaType::Group, voice).await
     }
@@ -993,7 +999,7 @@ impl SendMessage for GroupHandle {
     async fn upload_image<S: MahSession + ?Sized>(
         &self,
         session: &S,
-        image: Bytes,
+        image: FileUpload,
     ) -> Result<ImageInfo, S::Error> {
         self.upload_image(session, image).await
     }
@@ -1001,7 +1007,7 @@ impl SendMessage for GroupHandle {
     async fn upload_voice<S: MahSession + ?Sized>(
         &self,
         session: &S,
-        voice: Bytes,
+        voice: FileUpload,
     ) -> Result<VoiceInfo, S::Error> {
         self.upload_voice(session, voice).await
     }
@@ -1074,7 +1080,7 @@ impl MemberHandle {
     pub async fn upload_image<S: MahSession + ?Sized>(
         &self,
         session: &S,
-        image: Bytes,
+        image: FileUpload,
     ) -> Result<ImageInfo, S::Error> {
         session.upload_image(types::MediaType::Temp, image).await
     }
@@ -1082,7 +1088,7 @@ impl MemberHandle {
     pub async fn upload_voice<S: MahSession + ?Sized>(
         &self,
         session: &S,
-        voice: Bytes,
+        voice: FileUpload,
     ) -> Result<VoiceInfo, S::Error> {
         session.upload_voice(types::MediaType::Temp, voice).await
     }
@@ -1181,7 +1187,7 @@ impl SendMessage for MemberHandle {
     async fn upload_image<S: MahSession + ?Sized>(
         &self,
         session: &S,
-        image: Bytes,
+        image: FileUpload,
     ) -> Result<ImageInfo, S::Error> {
         self.upload_image(session, image).await
     }
@@ -1189,7 +1195,7 @@ impl SendMessage for MemberHandle {
     async fn upload_voice<S: MahSession + ?Sized>(
         &self,
         session: &S,
-        voice: Bytes,
+        voice: FileUpload,
     ) -> Result<VoiceInfo, S::Error> {
         self.upload_voice(session, voice).await
     }

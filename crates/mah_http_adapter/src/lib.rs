@@ -11,8 +11,8 @@ use mah_core::adapter::{self, Bytes, Mah, MahSession};
 use mah_core::event::MessageOrEvent;
 use mah_core::message::{FriendMessage, Message};
 use mah_core::{
-    types, AnnouncementDetails, Command, FileDetails, FriendDetails, GroupConfig, GroupDetails,
-    ImageInfo, MemberDetails, Profile, VoiceInfo,
+    types, AnnouncementDetails, Command, FileDetails, FileUpload, FriendDetails, GroupConfig,
+    GroupDetails, ImageInfo, MemberDetails, Profile, VoiceInfo,
 };
 use once_cell::sync::Lazy;
 use reqwest::header::HeaderValue;
@@ -249,35 +249,29 @@ impl<F: Fetch> MahSession for HttpAdapterSession<F> {
     async fn upload_image(
         &self,
         media_type: types::MediaType,
-        image: Bytes,
+        image: FileUpload,
     ) -> Result<ImageInfo, Self::Error> {
-        self.validate(
-            self.post("uploadImage")
-                .multipart(
-                    multipart::Form::new()
-                        .text("type", <&'static str>::from(media_type))
-                        .part("img", multipart::Part::stream(image)),
-                )
-                .build()?,
-        )
-        .await
+        let form = multipart::Form::new().text("type", <&'static str>::from(media_type));
+        let form = match image {
+            FileUpload::Url(url) => form.text("url", url),
+            FileUpload::Bytes(bytes) => form.part("img", multipart::Part::stream(bytes)),
+        };
+        self.validate(self.post("uploadImage").multipart(form).build()?)
+            .await
     }
 
     async fn upload_voice(
         &self,
         media_type: types::MediaType,
-        voice: Bytes,
+        voice: FileUpload,
     ) -> Result<VoiceInfo, Self::Error> {
-        self.validate(
-            self.post("uploadVoice")
-                .multipart(
-                    multipart::Form::new()
-                        .text("type", <&'static str>::from(media_type))
-                        .part("voice", multipart::Part::stream(voice)),
-                )
-                .build()?,
-        )
-        .await
+        let form = multipart::Form::new().text("type", <&'static str>::from(media_type));
+        let form = match voice {
+            FileUpload::Url(url) => form.text("url", url),
+            FileUpload::Bytes(bytes) => form.part("voice", multipart::Part::stream(bytes)),
+        };
+        self.validate(self.post("uploadVoice").multipart(form).build()?)
+            .await
     }
 
     async fn recall(&self, args: &types::MessageIdArgs) -> Result<(), Self::Error> {
