@@ -11,20 +11,20 @@ keywords = ["mirai"]
 categories = ["api-bindings"]
 
 [workspace.dependencies]
-anyhow = "1.0.71"
-async-trait = "0.1.68"
-bytes = "1.4.0"
+anyhow = "1.0.75"
+async-trait = "0.1.73"
+bytes = "1.5.0"
 derive-into-owned = "0.2.0"
-enum_dispatch = "0.3.11"
+enum_dispatch = "0.3.12"
 once_cell = "1.18.0"
-reqwest = { version = "0.11.18", features = ["multipart", "json"] }
-serde = { version = "1.0.164", features = ["derive"] }
-serde_json = "1.0.97"
-strum_macros = "0.25.0"
-thiserror = "1.0.40"
-tokio = "1.28.2"
+reqwest = { version = "0.11.22", features = ["multipart", "json"] }
+serde = { version = "1.0.188", features = ["derive"] }
+serde_json = "1.0.107"
+strum_macros = "0.25.2"
+thiserror = "1.0.49"
+tokio = "1.32.0"
 trim-in-place = "0.1.7"
-warp = "0.3.5"
+warp = "0.3.6"
 mah_core = { path = "crates/mah_core" }
 mah_http_adapter = { path = "crates/mah_http_adapter" }
 mah_webhook_adapter = { path = "crates/mah_webhook_adapter" }

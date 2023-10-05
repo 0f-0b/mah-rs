@@ -46,7 +46,7 @@ pub struct NudgeArgs {
     pub kind: SubjectKind,
 }
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, Deserialize, Serialize)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, Serialize)]
 pub enum SubjectKind {
     Friend,
     Group,

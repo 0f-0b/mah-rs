@@ -163,6 +163,18 @@ impl FriendNudgeEvent {
 }
 
 #[derive(Clone, Debug, Deserialize)]
+pub struct FriendAddEvent {
+    pub friend: FriendDetails,
+    #[serde(rename = "stranger")]
+    pub was_stranger: bool,
+}
+
+#[derive(Clone, Debug, Deserialize)]
+pub struct FriendDeleteEvent {
+    pub friend: FriendDetails,
+}
+
+#[derive(Clone, Debug, Deserialize)]
 pub struct FriendNicknameChangeEvent {
     pub friend: FriendDetails,
     #[serde(rename = "from")]
@@ -672,6 +684,8 @@ pub enum Event {
     StrangerNudge(StrangerNudgeEvent),
     FriendMessageRecall(FriendMessageRecallEvent),
     FriendNudge(FriendNudgeEvent),
+    FriendAdd(FriendAddEvent),
+    FriendDelete(FriendDeleteEvent),
     FriendNicknameChange(FriendNicknameChangeEvent),
     FriendTyping(FriendTypingEvent),
     GroupMessageRecall(GroupMessageRecallEvent),
@@ -777,6 +791,8 @@ impl<'de> Deserialize<'de> for MessageOrEvent {
             OtherClientOnlineEvent(OtherClientOnlineEvent),
             OtherClientOfflineEvent(OtherClientOfflineEvent),
             CommandExecutedEvent(CommandExecutedEvent),
+            FriendAddEvent(FriendAddEvent),
+            FriendDeleteEvent(FriendDeleteEvent),
         }
 
         Ok(match Impl::deserialize(deserializer)? {
@@ -851,6 +867,8 @@ impl<'de> Deserialize<'de> for MessageOrEvent {
             Impl::OtherClientOnlineEvent(event) => Self::Event(event.into()),
             Impl::OtherClientOfflineEvent(event) => Self::Event(event.into()),
             Impl::CommandExecutedEvent(event) => Self::Event(event.into()),
+            Impl::FriendAddEvent(event) => Self::Event(event.into()),
+            Impl::FriendDeleteEvent(event) => Self::Event(event.into()),
         })
     }
 }
