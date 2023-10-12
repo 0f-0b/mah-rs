@@ -58,28 +58,56 @@ pub struct IncomingFaceNode {
     #[serde(rename = "faceId")]
     pub id: i32,
     pub name: String,
+    #[serde(rename = "isSuperFace")]
+    pub super_face: bool,
+}
+
+#[derive(Clone, Debug, IntoOwned, Serialize)]
+pub struct OutgoingFaceNode<'a> {
+    #[serde(flatten)]
+    pub face: OutgoingFace<'a>,
+    #[serde(rename = "isSuperFace")]
+    pub super_face: bool,
 }
 
 #[derive(Clone, Debug, IntoOwned, Serialize)]
 #[serde(rename_all = "camelCase")]
-pub enum OutgoingFaceNode<'a> {
+pub enum OutgoingFace<'a> {
     #[serde(rename = "faceId")]
     Id(i32),
     Name(Cow<'a, str>),
 }
 
+impl<'a> OutgoingFaceNode<'a> {
+    pub fn to_super_face(self, super_face: bool) -> Self {
+        Self {
+            face: self.face,
+            super_face,
+        }
+    }
+}
+
 impl From<&IncomingFaceNode> for OutgoingFaceNode<'static> {
     fn from(value: &IncomingFaceNode) -> Self {
-        Self::Id(value.id)
+        Self {
+            face: OutgoingFace::Id(value.id),
+            super_face: value.super_face,
+        }
     }
 }
 
 pub fn face_from_id(id: i32) -> OutgoingFaceNode<'static> {
-    OutgoingFaceNode::Id(id)
+    OutgoingFaceNode {
+        face: OutgoingFace::Id(id),
+        super_face: false,
+    }
 }
 
 pub fn face_from_name<'a>(name: impl Into<Cow<'a, str>>) -> OutgoingFaceNode<'a> {
-    OutgoingFaceNode::Name(name.into())
+    OutgoingFaceNode {
+        face: OutgoingFace::Name(name.into()),
+        super_face: false,
+    }
 }
 
 #[derive(Clone, Debug, IntoOwned, Deserialize, Serialize)]
