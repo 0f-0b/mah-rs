@@ -576,6 +576,22 @@ impl IncomingFileNode {
     }
 }
 
+#[derive(Clone, Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct IncomingShortVideoNode {
+    pub video_id: String,
+    #[serde(rename = "filename")]
+    pub name: String,
+    #[serde(rename = "fileSize")]
+    pub size: i64,
+    #[serde(rename = "fileFormat")]
+    pub video_type: String,
+    #[serde(rename = "videoUrl")]
+    pub url: Option<String>,
+    #[serde(rename = "fileMd5")]
+    pub md5: String,
+}
+
 #[derive(Clone, Debug, IntoOwned, Serialize)]
 pub struct OutgoingMiraiCodeNode<'a> {
     pub code: Cow<'a, str>,
@@ -602,6 +618,7 @@ pub enum IncomingMessageNode {
     MusicShare(MusicShareNode<'static>),
     Forward(IncomingForwardNode),
     File(IncomingFileNode),
+    ShortVideo(IncomingShortVideoNode),
 }
 
 #[derive(Clone, Debug, IntoOwned, Serialize)]
@@ -649,6 +666,7 @@ impl<'a> TryFrom<&'a IncomingMessageNode> for OutgoingMessageNode<'a> {
             IncomingMessageNode::MusicShare(node) => Ok(Self::MusicShare(node.into())),
             IncomingMessageNode::Forward(node) => Ok(Self::Forward(node.try_into()?)),
             IncomingMessageNode::File(_) => Err(TryIntoOutgoingError),
+            IncomingMessageNode::ShortVideo(_) => Err(TryIntoOutgoingError),
         }
     }
 }
