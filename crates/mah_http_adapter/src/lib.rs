@@ -9,7 +9,7 @@ use std::num::NonZeroU32;
 use async_trait::async_trait;
 use mah_core::adapter::{self, Bytes, Mah, MahSession};
 use mah_core::event::MessageOrEvent;
-use mah_core::message::{FriendMessage, Message};
+use mah_core::message::Message;
 use mah_core::{
     types, AnnouncementDetails, Command, FileDetails, FileUpload, FriendDetails, GroupConfig,
     GroupDetails, ImageInfo, MemberDetails, MemberInfo, Profile, VoiceInfo,
@@ -286,7 +286,7 @@ impl<F: Fetch> MahSession for HttpAdapterSession<F> {
     async fn roaming_messages(
         &self,
         args: &types::RoamingMessagesArgs,
-    ) -> Result<Vec<FriendMessage>, Self::Error> {
+    ) -> Result<Vec<Message>, Self::Error> {
         self.data(self.post("roamingMessages").json(args).build()?)
             .await
     }

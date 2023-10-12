@@ -110,7 +110,16 @@ pub struct MessageIdArgs {
 pub struct RoamingMessagesArgs {
     pub time_start: i64,
     pub time_end: i64,
-    pub target: i64,
+    #[serde(flatten)]
+    pub target: RoamingMessagesTarget,
+}
+
+#[derive(Clone, Copy, Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub enum RoamingMessagesTarget {
+    #[serde(rename = "qq")]
+    Friend(i64),
+    Group(i64),
 }
 
 #[derive(Clone, Copy, Debug)]

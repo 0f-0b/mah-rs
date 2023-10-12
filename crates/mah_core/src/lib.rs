@@ -12,6 +12,7 @@ use std::time::{Duration, SystemTime};
 use async_trait::async_trait;
 use derive_into_owned::IntoOwned;
 use serde::{Deserialize, Deserializer, Serialize};
+use types::{RoamingMessagesArgs, RoamingMessagesTarget};
 
 use self::adapter::{Bytes, MahSession};
 use self::message::{Message, OutgoingMessageContents, OutgoingMessageNode};
@@ -384,6 +385,16 @@ pub trait SendNudge {
 }
 
 #[async_trait]
+pub trait GetRoamingMessages {
+    async fn get_roaming_messages<S: MahSession + ?Sized>(
+        &self,
+        session: &S,
+        start_time_secs: i64,
+        end_time_secs: i64,
+    ) -> Result<Vec<Message>, S::Error>;
+}
+
+#[async_trait]
 pub trait GetProfile {
     async fn get_profile<S: MahSession + ?Sized>(&self, session: &S) -> Result<Profile, S::Error>;
 }
@@ -605,6 +616,21 @@ impl FriendHandle {
             .await
     }
 
+    pub async fn get_roaming_messages<S: MahSession + ?Sized>(
+        &self,
+        session: &S,
+        start_time_secs: i64,
+        end_time_secs: i64,
+    ) -> Result<Vec<Message>, S::Error> {
+        session
+            .roaming_messages(&RoamingMessagesArgs {
+                time_start: start_time_secs,
+                time_end: end_time_secs,
+                target: RoamingMessagesTarget::Friend(self.id),
+            })
+            .await
+    }
+
     pub async fn get_profile<S: MahSession + ?Sized>(
         &self,
         session: &S,
@@ -662,6 +688,19 @@ impl SendNudge for FriendHandle {
         target: UserHandle,
     ) -> Result<(), S::Error> {
         self.send_nudge(session, target).await
+    }
+}
+
+#[async_trait]
+impl GetRoamingMessages for FriendHandle {
+    async fn get_roaming_messages<S: MahSession + ?Sized>(
+        &self,
+        session: &S,
+        start_time_secs: i64,
+        end_time_secs: i64,
+    ) -> Result<Vec<Message>, S::Error> {
+        self.get_roaming_messages(session, start_time_secs, end_time_secs)
+            .await
     }
 }
 
@@ -833,6 +872,21 @@ impl GroupHandle {
                 target: target.id,
                 subject: self.id,
                 kind: types::SubjectKind::Group,
+            })
+            .await
+    }
+
+    pub async fn get_roaming_messages<S: MahSession + ?Sized>(
+        &self,
+        session: &S,
+        start_time_secs: i64,
+        end_time_secs: i64,
+    ) -> Result<Vec<Message>, S::Error> {
+        session
+            .roaming_messages(&RoamingMessagesArgs {
+                time_start: start_time_secs,
+                time_end: end_time_secs,
+                target: RoamingMessagesTarget::Group(self.id),
             })
             .await
     }
@@ -1056,6 +1110,19 @@ impl SendNudge for GroupHandle {
         target: UserHandle,
     ) -> Result<(), S::Error> {
         self.send_nudge(session, target).await
+    }
+}
+
+#[async_trait]
+impl GetRoamingMessages for GroupHandle {
+    async fn get_roaming_messages<S: MahSession + ?Sized>(
+        &self,
+        session: &S,
+        start_time_secs: i64,
+        end_time_secs: i64,
+    ) -> Result<Vec<Message>, S::Error> {
+        self.get_roaming_messages(session, start_time_secs, end_time_secs)
+            .await
     }
 }
 

@@ -6,7 +6,7 @@ pub use bytes::Bytes;
 use serde::Deserialize;
 use thiserror::Error;
 
-use crate::message::{FriendMessage, Message};
+use crate::message::Message;
 use crate::{
     types, AnnouncementDetails, Command, FileDetails, FileUpload, FriendDetails, GroupConfig,
     GroupDetails, ImageInfo, MemberDetails, MemberInfo, Profile, VoiceInfo,
@@ -56,7 +56,7 @@ pub trait MahSession: Sync {
     async fn roaming_messages(
         &self,
         args: &types::RoamingMessagesArgs,
-    ) -> Result<Vec<FriendMessage>, Self::Error>;
+    ) -> Result<Vec<Message>, Self::Error>;
     // endregion
 
     // region: event
