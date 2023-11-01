@@ -849,6 +849,7 @@ const _: () = {
                 MusicShare(MusicShareNode<'static>),
                 Forward(IncomingForwardNode),
                 File(IncomingFileNode),
+                ShortVideo(IncomingShortVideoNode),
             }
 
             let mut id = None;
@@ -900,6 +901,7 @@ const _: () = {
                     Impl::MusicShare(node) => nodes.push(IncomingMessageNode::MusicShare(node)),
                     Impl::Forward(node) => nodes.push(IncomingMessageNode::Forward(node)),
                     Impl::File(node) => nodes.push(IncomingMessageNode::File(node)),
+                    Impl::ShortVideo(node) => nodes.push(IncomingMessageNode::ShortVideo(node)),
                 }
             }
             Ok(IncomingMessageContents {
