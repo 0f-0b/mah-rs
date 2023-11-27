@@ -89,6 +89,12 @@ pub struct VoiceInfo {
     pub voice_id: String,
 }
 
+#[derive(Clone, Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ShortVideoInfo {
+    pub video_id: String,
+}
+
 #[derive(Clone, Debug)]
 pub struct FileMetadata {
     pub size: i64,
@@ -364,6 +370,12 @@ pub trait SendMessage {
         session: &S,
         voice: FileUpload,
     ) -> Result<VoiceInfo, S::Error>;
+    async fn upload_short_video<S: MahSession + ?Sized>(
+        &self,
+        session: &S,
+        video: Bytes,
+        thumbnail: Bytes,
+    ) -> Result<ShortVideoInfo, S::Error>;
 }
 
 #[async_trait]
@@ -602,6 +614,17 @@ impl FriendHandle {
         session.upload_voice(types::MediaType::Friend, voice).await
     }
 
+    pub async fn upload_short_video<S: MahSession + ?Sized>(
+        &self,
+        session: &S,
+        video: Bytes,
+        thumbnail: Bytes,
+    ) -> Result<ShortVideoInfo, S::Error> {
+        session
+            .upload_short_video(types::MediaType::Friend, video, thumbnail)
+            .await
+    }
+
     pub async fn send_nudge<S: MahSession + ?Sized>(
         &self,
         session: &S,
@@ -677,6 +700,15 @@ impl SendMessage for FriendHandle {
         voice: FileUpload,
     ) -> Result<VoiceInfo, S::Error> {
         self.upload_voice(session, voice).await
+    }
+
+    async fn upload_short_video<S: MahSession + ?Sized>(
+        &self,
+        session: &S,
+        video: Bytes,
+        thumbnail: Bytes,
+    ) -> Result<ShortVideoInfo, S::Error> {
+        self.upload_short_video(session, video, thumbnail).await
     }
 }
 
@@ -860,6 +892,17 @@ impl GroupHandle {
         voice: FileUpload,
     ) -> Result<VoiceInfo, S::Error> {
         session.upload_voice(types::MediaType::Group, voice).await
+    }
+
+    pub async fn upload_short_video<S: MahSession + ?Sized>(
+        &self,
+        session: &S,
+        video: Bytes,
+        thumbnail: Bytes,
+    ) -> Result<ShortVideoInfo, S::Error> {
+        session
+            .upload_short_video(types::MediaType::Group, video, thumbnail)
+            .await
     }
 
     pub async fn send_nudge<S: MahSession + ?Sized>(
@@ -1100,6 +1143,15 @@ impl SendMessage for GroupHandle {
     ) -> Result<VoiceInfo, S::Error> {
         self.upload_voice(session, voice).await
     }
+
+    async fn upload_short_video<S: MahSession + ?Sized>(
+        &self,
+        session: &S,
+        video: Bytes,
+        thumbnail: Bytes,
+    ) -> Result<ShortVideoInfo, S::Error> {
+        self.upload_short_video(session, video, thumbnail).await
+    }
 }
 
 #[async_trait]
@@ -1193,6 +1245,17 @@ impl MemberHandle {
         voice: FileUpload,
     ) -> Result<VoiceInfo, S::Error> {
         session.upload_voice(types::MediaType::Temp, voice).await
+    }
+
+    pub async fn upload_short_video<S: MahSession + ?Sized>(
+        &self,
+        session: &S,
+        video: Bytes,
+        thumbnail: Bytes,
+    ) -> Result<ShortVideoInfo, S::Error> {
+        session
+            .upload_short_video(types::MediaType::Temp, video, thumbnail)
+            .await
     }
 
     pub async fn get_profile<S: MahSession + ?Sized>(
@@ -1300,6 +1363,15 @@ impl SendMessage for MemberHandle {
         voice: FileUpload,
     ) -> Result<VoiceInfo, S::Error> {
         self.upload_voice(session, voice).await
+    }
+
+    async fn upload_short_video<S: MahSession + ?Sized>(
+        &self,
+        session: &S,
+        video: Bytes,
+        thumbnail: Bytes,
+    ) -> Result<ShortVideoInfo, S::Error> {
+        self.upload_short_video(session, video, thumbnail).await
     }
 }
 

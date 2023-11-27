@@ -9,7 +9,7 @@ use thiserror::Error;
 use crate::message::Message;
 use crate::{
     types, AnnouncementDetails, Command, FileDetails, FileUpload, FriendDetails, GroupConfig,
-    GroupDetails, ImageInfo, MemberDetails, MemberInfo, Profile, VoiceInfo,
+    GroupDetails, ImageInfo, MemberDetails, MemberInfo, Profile, ShortVideoInfo, VoiceInfo,
 };
 
 #[async_trait]
@@ -51,6 +51,12 @@ pub trait MahSession: Sync {
         media_type: types::MediaType,
         voice: FileUpload,
     ) -> Result<VoiceInfo, Self::Error>;
+    async fn upload_short_video(
+        &self,
+        media_type: types::MediaType,
+        video: Bytes,
+        thumbnail: Bytes,
+    ) -> Result<ShortVideoInfo, Self::Error>;
     async fn recall(&self, args: &types::MessageIdArgs) -> Result<(), Self::Error>;
     async fn nudge(&self, args: &types::NudgeArgs) -> Result<(), Self::Error>;
     async fn roaming_messages(

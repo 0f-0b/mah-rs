@@ -12,7 +12,7 @@ use mah_core::event::MessageOrEvent;
 use mah_core::message::Message;
 use mah_core::{
     types, AnnouncementDetails, Command, FileDetails, FileUpload, FriendDetails, GroupConfig,
-    GroupDetails, ImageInfo, MemberDetails, MemberInfo, Profile, VoiceInfo,
+    GroupDetails, ImageInfo, MemberDetails, MemberInfo, Profile, ShortVideoInfo, VoiceInfo,
 };
 use once_cell::sync::Lazy;
 use reqwest::header::HeaderValue;
@@ -272,6 +272,25 @@ impl<F: Fetch> MahSession for HttpAdapterSession<F> {
         };
         self.validate(self.post("uploadVoice").multipart(form).build()?)
             .await
+    }
+
+    async fn upload_short_video(
+        &self,
+        media_type: types::MediaType,
+        video: Bytes,
+        thumbnail: Bytes,
+    ) -> Result<ShortVideoInfo, Self::Error> {
+        self.validate(
+            self.post("uploadShortVideo")
+                .multipart(
+                    multipart::Form::new()
+                        .text("type", <&'static str>::from(media_type))
+                        .part("video", multipart::Part::stream(video))
+                        .part("thumbnail", multipart::Part::stream(thumbnail)),
+                )
+                .build()?,
+        )
+        .await
     }
 
     async fn recall(&self, args: &types::MessageIdArgs) -> Result<(), Self::Error> {
