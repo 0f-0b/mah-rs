@@ -16,6 +16,7 @@ use crate::{
 };
 
 #[enum_dispatch]
+#[allow(dead_code)]
 trait AnyEvent {}
 
 #[derive(Clone, Debug, Deserialize)]
@@ -687,6 +688,7 @@ pub enum Event {
 }
 
 #[enum_dispatch]
+#[allow(dead_code)]
 trait AnyMessageOrEvent {}
 
 #[derive(Clone, Debug)]

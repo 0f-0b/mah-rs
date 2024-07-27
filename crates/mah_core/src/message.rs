@@ -13,9 +13,11 @@ use crate::{
 };
 
 #[enum_dispatch]
+#[allow(dead_code)]
 trait AnyIncomingMessageNode {}
 
 #[enum_dispatch]
+#[allow(dead_code)]
 trait AnyOutgoingMessageNode {}
 
 #[derive(Clone, Copy, Debug, Deserialize, Serialize)]
@@ -404,6 +406,7 @@ pub struct OutgoingForwardNode<'a> {
 }
 
 #[enum_dispatch]
+#[allow(dead_code)]
 trait AnyOutgoingForwardedMessage {}
 
 #[derive(Clone, Copy, Debug)]
