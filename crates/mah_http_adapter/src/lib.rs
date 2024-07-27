@@ -5,6 +5,7 @@ pub mod fetch;
 use std::borrow::Cow;
 use std::fmt::Debug;
 use std::num::NonZeroU32;
+use std::sync::LazyLock;
 
 use async_trait::async_trait;
 use mah_core::adapter::{self, Bytes, Mah, MahSession};
@@ -14,7 +15,6 @@ use mah_core::{
     types, AnnouncementDetails, Command, FileDetails, FileUpload, FriendDetails, GroupConfig,
     GroupDetails, ImageInfo, MemberDetails, MemberInfo, Profile, ShortVideoInfo, VoiceInfo,
 };
-use once_cell::sync::Lazy;
 use reqwest::header::HeaderValue;
 pub use reqwest::Url;
 use reqwest::{multipart, Method, Request, RequestBuilder, Response};
@@ -39,7 +39,7 @@ trait HttpAdapterHandler {
     }
 
     fn request(&self, method: Method, path: &str) -> RequestBuilder {
-        static REQUEST_BUILDER: Lazy<reqwest::Client> = Lazy::new(Default::default);
+        static REQUEST_BUILDER: LazyLock<reqwest::Client> = LazyLock::new(Default::default);
         REQUEST_BUILDER.request(method, self.base_url().join(path).unwrap())
     }
 
