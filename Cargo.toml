@@ -11,17 +11,17 @@ keywords = ["mirai"]
 categories = ["api-bindings"]
 
 [workspace.dependencies]
-anyhow = "1.0.86"
-async-trait = "0.1.81"
-bytes = "1.6.1"
+anyhow = "1.0.94"
+async-trait = "0.1.83"
+bytes = "1.9.0"
 derive-into-owned = "0.2.0"
 enum_dispatch = "0.3.13"
-reqwest = { version = "0.12.5", features = ["multipart", "json"] }
-serde = { version = "1.0.204", features = ["derive"] }
-serde_json = "1.0.120"
+reqwest = { version = "0.12.9", features = ["multipart", "json"] }
+serde = { version = "1.0.215", features = ["derive"] }
+serde_json = "1.0.133"
 strum_macros = "0.26.4"
-thiserror = "1.0.63"
-tokio = "1.39.1"
+thiserror = "2.0.4"
+tokio = "1.42.0"
 trim-in-place = "0.1.7"
 warp = "0.3.7"
 mah_core = { path = "crates/mah_core" }
