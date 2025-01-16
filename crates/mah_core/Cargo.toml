@@ -20,6 +20,7 @@ thiserror.workspace = true
 [dev-dependencies]
 anyhow.workspace = true
 tokio = { workspace = true, features = ["macros", "rt-multi-thread", "signal"] }
+tokio-util = { workspace = true, features = ["rt"] }
+trim-in-place.workspace = true
 mah_http_adapter.workspace = true
 mah_webhook_adapter.workspace = true
-trim-in-place.workspace = true

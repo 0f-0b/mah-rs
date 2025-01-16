@@ -8,9 +8,9 @@ use mah_core::make_message;
 use mah_core::message::{AnyMessage as _, IncomingMessageNode, Message};
 use mah_http_adapter::HttpAdapter;
 use mah_webhook_adapter::WebhookAdapterEvents;
+use tokio_util::sync::CancellationToken;
+use tokio_util::task::TaskTracker;
 use trim_in_place::TrimInPlace as _;
-
-use self::abort::AbortSignal;
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
@@ -24,7 +24,17 @@ async fn main() -> anyhow::Result<()> {
     let port = args[1].parse()?;
     let endpoint = args[2].parse()?;
     let verify_key = args.get(3);
-    let mut signal = AbortSignal::new(async { tokio::signal::ctrl_c().await.unwrap() });
+    let tracker = TaskTracker::new();
+    let token = CancellationToken::new();
+    tokio::spawn({
+        let tracker = tracker.clone();
+        let token = token.clone();
+        async move {
+            tokio::signal::ctrl_c().await.unwrap();
+            tracker.close();
+            token.cancel();
+        }
+    });
     let mah = HttpAdapter::new(endpoint, verify_key.cloned());
     let session = Arc::new(mah.verify().await?);
     let mut events = WebhookAdapterEvents::new().listen((Ipv4Addr::LOCALHOST, port), |err| {
@@ -33,19 +43,20 @@ async fn main() -> anyhow::Result<()> {
     while let Some(event) = loop {
         tokio::select! {
             event = events.recv() => break event,
-            _ = signal.recv() => {
+            _ = token.cancelled() => {
                 events.close();
                 continue;
             }
         }
     } {
         let session = session.clone();
-        tokio::spawn(async move {
+        tracker.spawn(async move {
             if let Err(err) = handle_event(session.as_ref(), event).await {
                 eprintln!("{err}");
             }
         });
     }
+    tracker.wait().await;
     Ok(())
 }
 
@@ -81,34 +92,4 @@ fn get_text(nodes: &[IncomingMessageNode]) -> String {
         .join("\n");
     text.trim_in_place();
     text
-}
-
-mod abort {
-    use std::future::Future;
-
-    use tokio::sync::watch;
-
-    #[derive(Clone, Debug)]
-    pub struct AbortSignal(watch::Receiver<bool>);
-
-    impl AbortSignal {
-        pub fn new(signal: impl Future<Output = ()> + Send + 'static) -> Self {
-            let (tx, rx) = watch::channel(false);
-            tokio::spawn(async move {
-                signal.await;
-                tx.send_replace(true);
-            });
-            Self(rx)
-        }
-
-        pub fn aborted(&self) -> bool {
-            *self.0.borrow()
-        }
-
-        pub async fn recv(&mut self) {
-            if !self.aborted() {
-                self.0.changed().await.unwrap();
-            }
-        }
-    }
 }
