@@ -6,7 +6,7 @@ use serde::{Deserialize, Serialize, Serializer};
 use strum_macros::IntoStaticStr;
 
 use crate::message::{OutgoingMessageContents, OutgoingMessageNode};
-use crate::{adapter, Announcement, GroupConfigUpdate, MemberInfoUpdate, UserDetails};
+use crate::{Announcement, GroupConfigUpdate, MemberInfoUpdate, UserDetails, adapter};
 
 #[derive(Clone, Copy, Debug, Serialize)]
 #[serde(rename_all = "camelCase")]

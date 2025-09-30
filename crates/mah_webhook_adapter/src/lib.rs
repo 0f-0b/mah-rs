@@ -1,6 +1,7 @@
 #![forbid(unsafe_code)]
 
 use std::convert::Infallible;
+use std::io;
 use std::net::SocketAddr;
 
 use mah_core::event::MessageOrEvent;
@@ -19,7 +20,7 @@ impl WebhookAdapterEvents {
         self,
         addr: impl Into<SocketAddr>,
         on_error: impl Fn(Rejection) + Clone + Send + Sync + 'static,
-    ) -> Result<mpsc::UnboundedReceiver<MessageOrEvent>, warp::Error> {
+    ) -> io::Result<mpsc::UnboundedReceiver<MessageOrEvent>> {
         let addr = addr.into();
         let (tx, rx) = mpsc::unbounded_channel();
         let route = warp::body::content_length_limit(0x10000)
@@ -35,9 +36,15 @@ impl WebhookAdapterEvents {
                 on_error(err);
                 std::future::ready(Ok::<_, Infallible>(warp::http::StatusCode::BAD_REQUEST))
             });
-        let (_, server) = warp::serve(route)
-            .try_bind_with_graceful_shutdown(addr, async move { tx.closed().await })?;
-        tokio::spawn(server);
+        let listener = std::net::TcpListener::bind(addr)?;
+        listener.set_nonblocking(true)?;
+        let listener = tokio::net::TcpListener::from_std(listener)?;
+        tokio::spawn(
+            warp::serve(route)
+                .incoming(listener)
+                .graceful(async move { tx.closed().await })
+                .run(),
+        );
         Ok(rx)
     }
 }

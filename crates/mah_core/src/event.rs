@@ -10,9 +10,9 @@ use crate::message::{
     TempMessage, TempSyncMessage,
 };
 use crate::{
-    types, Bot, FriendDetails, FriendHandle, GroupDetails, GroupHandle, GroupHonor, MemberDetails,
+    Bot, FriendDetails, FriendHandle, GroupDetails, GroupHandle, GroupHonor, MemberDetails,
     MemberHandle, MemberPermission, MessageHandle, OtherClientDetails, StrangerDetails,
-    StrangerHandle, UserHandle,
+    StrangerHandle, UserHandle, types,
 };
 
 #[enum_dispatch]

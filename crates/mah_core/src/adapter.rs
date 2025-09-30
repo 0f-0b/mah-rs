@@ -8,8 +8,8 @@ use thiserror::Error;
 
 use crate::message::Message;
 use crate::{
-    types, AnnouncementDetails, Command, FileDetails, FileUpload, FriendDetails, GroupConfig,
-    GroupDetails, ImageInfo, MemberDetails, MemberInfo, Profile, ShortVideoInfo, VoiceInfo,
+    AnnouncementDetails, Command, FileDetails, FileUpload, FriendDetails, GroupConfig,
+    GroupDetails, ImageInfo, MemberDetails, MemberInfo, Profile, ShortVideoInfo, VoiceInfo, types,
 };
 
 #[async_trait]

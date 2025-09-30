@@ -8,8 +8,8 @@ use serde::{Deserialize, Deserializer, Serialize, Serializer};
 use thiserror::Error;
 
 use crate::{
-    types, Bot, FileHandle, FriendDetails, GroupDetails, GroupHandle, MemberDetails, MemberHandle,
-    MessageHandle, OtherClientDetails, StrangerDetails, UserHandle,
+    Bot, FileHandle, FriendDetails, GroupDetails, GroupHandle, MemberDetails, MemberHandle,
+    MessageHandle, OtherClientDetails, StrangerDetails, UserHandle, types,
 };
 
 #[enum_dispatch]
@@ -80,7 +80,7 @@ pub enum OutgoingFace<'a> {
     Name(Cow<'a, str>),
 }
 
-impl<'a> OutgoingFaceNode<'a> {
+impl OutgoingFaceNode<'_> {
     pub fn to_super_face(self, super_face: bool) -> Self {
         Self {
             face: self.face,
@@ -445,7 +445,7 @@ impl From<MessageHandle> for OutgoingForwardedMessage<'_> {
     }
 }
 
-impl<'a> Serialize for OutgoingForwardedMessage<'a> {
+impl Serialize for OutgoingForwardedMessage<'_> {
     fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
         #[derive(Debug, Serialize)]
         struct Id {
@@ -503,7 +503,7 @@ pub struct ForwardDisplay<'a> {
     pub title: Option<Cow<'a, str>>,
 }
 
-impl<'a> ForwardDisplay<'a> {
+impl ForwardDisplay<'_> {
     pub fn into_owned(self) -> ForwardDisplay<'static> {
         ForwardDisplay {
             brief: self.brief.map(|val| val.into_owned().into()),
@@ -797,11 +797,12 @@ impl<'a> OutgoingMessageContents<'a> {
 
 #[macro_export]
 macro_rules! make_message {
-  ($($x:expr),* $(,)?) => {{
-    $crate::message::OutgoingMessageContents::new(&[
-      $($crate::__::Into::into($x),)*
-    ])
-  }};
+    ($($x:expr),* $(,)?) => {
+        $crate::message::OutgoingMessageContents {
+            quote: $crate::__::None,
+            nodes: &[$($crate::__::Into::into($x),)*],
+        }
+    };
 }
 
 const _: () = {

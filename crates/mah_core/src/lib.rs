@@ -1724,4 +1724,5 @@ impl MessageHandle {
 #[doc(hidden)]
 pub mod __ {
     pub use std::convert::Into;
+    pub use std::option::Option::None;
 }
